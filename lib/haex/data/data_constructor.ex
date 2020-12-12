@@ -2,88 +2,91 @@ defmodule Haex.Data.DataConstructor do
   alias __MODULE__, as: T
 
   @type t() :: %T{
-          name: module(),
-          type: module(),
-          params: param_list() | param_keywords(),
+          name: mod_name(),
+          type: mod_name(),
+          params: [param()] | param_keywords(),
           record?: boolean()
         }
   @enforce_keys [:name, :type, :params, :record?]
   defstruct [:name, :type, :params, :record?]
 
-  @type name() :: atom()
-  @type param() :: {:variable, name()} | {:external_type, raw_ast :: term()}
+  @type mod_name() :: [atom()]
+  @type param_name() :: atom()
+  @type param() :: {:variable, param_name()} | {:external_type, raw_ast :: term()}
 
-  @type param_list() :: [param()]
-  @type param_keywords() :: [{name(), param()}]
+  @type param_keywords() :: [{param_name(), param()}]
 
+  @spec build(t()) :: Macro.output()
   def build(%T{name: name} = dc) do
     quote do
-      defmodule unquote(mod(name)) do
-        unquote(type(dc))
-        unquote(new(dc))
+      defmodule unquote(quoted_mod(name)) do
+        unquote(quoted_type_spec(dc))
+        unquote(quoted_new(dc))
       end
     end
   end
 
+  @spec type_variables(t()) :: [param()]
   def type_variables(%T{params: params}) do
     params
     |> Enum.filter(fn {param_type, _var} -> param_type == :variable end)
     |> Enum.uniq()
   end
 
-  def quoted_type_variables(%T{} = dc) do
-    dc
-    |> type_variables()
-    |> Enum.map(&param_to_quoted_typespec_param/1)
+  @spec quoted_type_fields(t()) :: Macro.output()
+  defp quoted_type_fields(%T{params: params}) do
+    Enum.map(params, &param_to_quoted_typespec_param/1)
   end
 
-  def type_fields(%T{params: params}), do: params
+  @spec quoted_mod(mod_name()) :: Macro.output()
+  defp quoted_mod(name), do: {:__aliases__, [alias: false], name}
 
-  def quoted_type_fields(%T{} = dc) do
-    dc
-    |> type_fields()
-    |> Enum.map(&param_to_quoted_typespec_param/1)
-  end
-
-  defp mod(name), do: {:__aliases__, [alias: false], name}
-
-  defp type(%T{params: []} = dc) do
+  @spec quoted_type_spec(t()) :: Macro.output()
+  defp quoted_type_spec(%T{params: []} = dc) do
     quote do
-      @opaque unquote(type_t(dc)) :: __MODULE__
+      @opaque unquote(quoted_type_t(dc)) :: __MODULE__
     end
   end
 
-  defp type(%T{record?: false} = dc) do
+  defp quoted_type_spec(%T{record?: false} = dc) do
     fields = quoted_type_fields(dc)
 
     quote do
-      @opaque unquote(type_t(dc)) :: {__MODULE__, unquote_splicing(fields)}
+      @opaque unquote(quoted_type_t(dc)) :: {__MODULE__, unquote_splicing(fields)}
     end
   end
 
-  defp type_t(%T{params: []}) do
+  @spec quoted_type_t(t()) :: Macro.output()
+  defp quoted_type_t(%T{params: []}) do
     quote do
       t()
     end
   end
 
-  defp type_t(%T{record?: false} = dc) do
+  defp quoted_type_t(%T{record?: false} = dc) do
+    quoted_type_variables =
+      dc
+      |> type_variables()
+      |> Enum.map(&param_to_quoted_typespec_param/1)
+
     quote do
-      t(unquote_splicing(quoted_type_variables(dc)))
+      t(unquote_splicing(quoted_type_variables))
     end
   end
 
+  @spec param_to_quoted_typespec_param(param()) :: Macro.output()
   defp param_to_quoted_typespec_param({:variable, variable}), do: {variable, [], Elixir}
   defp param_to_quoted_typespec_param({:external_type, external}), do: external
 
-  defp new(%T{params: []} = dc) do
+  @spec quoted_new(t()) :: Macro.output()
+  defp quoted_new(%T{params: []} = dc) do
     quote do
-      @spec new() :: unquote(type_t(dc))
+      @spec new() :: unquote(quoted_type_t(dc))
       def new(), do: __MODULE__
     end
   end
 
-  defp new(%T{} = dc) do
+  defp quoted_new(%T{} = dc) do
     variables = type_variables(dc)
     fields = quoted_type_fields(dc)
 
@@ -93,7 +96,7 @@ defmodule Haex.Data.DataConstructor do
     args = Macro.generate_arguments(length(fields), nil)
 
     quote do
-      @spec new(unquote_splicing(fields)) :: unquote(type_t(dc))
+      @spec new(unquote_splicing(fields)) :: unquote(quoted_type_t(dc))
             when unquote(when_clause)
       def new(unquote_splicing(args)), do: {__MODULE__, unquote_splicing(args)}
     end

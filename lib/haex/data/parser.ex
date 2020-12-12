@@ -3,6 +3,7 @@ defmodule Haex.Data.Parser do
   alias Haex.Data.DataConstructor
   alias Haex.Data.TypeConstructor
 
+  @spec parse(Macro.t()) :: Data.t()
   def parse({:"::", _meta, [type_ast, data_asts]}) do
     type_constructor = parse_type_constructor(type_ast)
 
@@ -14,9 +15,8 @@ defmodule Haex.Data.Parser do
     }
   end
 
+  @spec parse_type_constructor(Macro.t()) :: TypeConstructor.t()
   defp parse_type_constructor({:__aliases__, _, type_name}) do
-    IO.inspect(type_name, label: "type_name")
-
     %TypeConstructor{
       name: type_name,
       params: []
@@ -32,6 +32,7 @@ defmodule Haex.Data.Parser do
     }
   end
 
+  @spec parse_type_params(Macro.t()) :: [atom()]
   defp parse_type_params([]), do: []
   defp parse_type_params(no_parens: true), do: []
 
@@ -39,6 +40,7 @@ defmodule Haex.Data.Parser do
     Enum.map(type_params_ast, fn {type_param_name, _meta, _ctx} -> type_param_name end)
   end
 
+  @spec parse_data_constructors(Macro.t(), TypeConstructor.t()) :: [DataConstructor.t()]
   defp parse_data_constructors({:|, _meta, _asts} = ast, type_constructor) do
     ast |> or_ast_to_list() |> parse_data_constructors(type_constructor)
   end
@@ -51,9 +53,11 @@ defmodule Haex.Data.Parser do
     [parse_data_constructor(data_ast, type_constructor)]
   end
 
+  @spec or_ast_to_list(Macro.t()) :: [Macro.t()]
   defp or_ast_to_list({:|, _meta, [h_ast, t_ast]}), do: [h_ast | or_ast_to_list(t_ast)]
   defp or_ast_to_list(ast), do: [ast]
 
+  @spec parse_data_constructor(Macro.t(), TypeConstructor.t()) :: DataConstructor.t()
   defp parse_data_constructor({:__aliases__, _, data_name}, type_constructor) do
     %DataConstructor{
       name: data_name,
@@ -77,6 +81,7 @@ defmodule Haex.Data.Parser do
     }
   end
 
+  @spec parse_data_params(Macro.t()) :: {[DataConstructor.param()], is_record :: boolean()}
   defp parse_data_params([data_params_ast]) when is_list(data_params_ast) do
     if Keyword.keyword?(data_params_ast) do
       params =
@@ -95,6 +100,7 @@ defmodule Haex.Data.Parser do
     {params, false}
   end
 
+  @spec parse_data_param(Macro.t()) :: DataConstructor.param()
   defp parse_data_param({name, _, args}) when not is_list(args) do
     {:variable, name}
   end
