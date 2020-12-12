@@ -1,4 +1,7 @@
 defmodule Haex.Data.TypeConstructor do
+  @moduledoc """
+  builds type constructor module used to implement a data type
+  """
   alias __MODULE__, as: T
   alias Haex.Data.DataConstructor, as: DataConstructor
 

@@ -1,4 +1,6 @@
 defmodule Haex.Example do
+  @moduledoc false
+
   import Haex
 
   # data Bool = False | True

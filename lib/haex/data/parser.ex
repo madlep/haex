@@ -1,4 +1,9 @@
 defmodule Haex.Data.Parser do
+  @moduledoc """
+  Parses an AST received from `Haex.data/1` macro, and generates a
+  `Haex.Data.t()` struct which can be used to generate modules to represent
+  that data type
+  """
   alias Haex.Data
   alias Haex.Data.DataConstructor
   alias Haex.Data.TypeConstructor

@@ -1,4 +1,8 @@
 defmodule Haex.Data do
+  @moduledoc """
+  Parses and builds modules to implement data types
+  """
+
   alias Haex.Data.DataConstructor
   alias Haex.Data.Parser
   alias Haex.Data.TypeConstructor
