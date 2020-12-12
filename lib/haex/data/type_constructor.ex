@@ -20,6 +20,7 @@ defmodule Haex.Data.TypeConstructor do
     quote do
       defmodule unquote({:__aliases__, [alias: false], name}) do
         unquote(Enum.map(data_constructors, &DataConstructor.build/1))
+        unquote(Enum.map(data_constructors, &DataConstructor.build_helper/1))
       end
     end
   end

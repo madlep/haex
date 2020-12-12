@@ -30,6 +30,27 @@ defmodule Haex.Data.DataConstructor do
     end
   end
 
+  @spec build_helper(t()) :: Macro.output()
+  def build_helper(%T{name: name} = dc) do
+    # TODO refactor this to remove duplication with build_new
+    helper_name = helper_name(name)
+    variables = type_variables(dc)
+    fields = quoted_type_fields(dc)
+
+    when_clause =
+      Enum.map(variables, fn {:variable, variable} -> {variable, {:var, [], Elixir}} end)
+
+    args = Macro.generate_arguments(length(fields), nil)
+
+    quote do
+      @spec unquote(helper_name)(unquote_splicing(fields)) ::
+              unquote(quoted_mod(name)).unquote(quoted_type_t(dc))
+            when unquote(when_clause)
+      def unquote(helper_name)(unquote_splicing(args)),
+        do: unquote(quoted_mod(name)).new(unquote_splicing(args))
+    end
+  end
+
   @spec type_variables(t()) :: [param()]
   def type_variables(%T{params: params}) do
     params
@@ -104,5 +125,13 @@ defmodule Haex.Data.DataConstructor do
             when unquote(when_clause)
       def new(unquote_splicing(args)), do: {__MODULE__, unquote_splicing(args)}
     end
+  end
+
+  defp helper_name(name) do
+    name
+    |> List.last()
+    |> Atom.to_string()
+    |> Macro.underscore()
+    |> String.to_atom()
   end
 end
