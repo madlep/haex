@@ -15,7 +15,7 @@ defmodule Haex.Example do
   data Either.t(a, b) :: Left.t(a) | Right.t(b)
 
   # data Tree a = Leaf | Node a (Tree a) (Tree a)
-  data Tree.t(a) :: Leaf | Node.t(a, Tree.t(a), Tree.t(a))
+  # data Tree.t(a) :: Leaf | Node.t(a, Tree.t(a), Tree.t(a))
 
   # data Person = Person String String Int Float String String
   data Person :: Person.t(String.t(), String.t(), integer(), float(), String.t(), String.t())
