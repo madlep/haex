@@ -3,12 +3,13 @@ defmodule Haex.Data.DataConstructorBuilder do
   generates AST representation of `Haex.Data.DataConstructor` to return from
   `Haex.data/1` macro
   """
+  alias Haex.Data.Builder
   alias Haex.Data.DataConstructor
 
   @spec build(DataConstructor.t()) :: Macro.output()
   def build(%DataConstructor{name: name} = dc) do
     quote do
-      defmodule unquote(mod(name)) do
+      defmodule unquote(Builder.mod(name)) do
         unquote(type_spec(dc))
         unquote(new(dc))
       end
@@ -22,7 +23,7 @@ defmodule Haex.Data.DataConstructorBuilder do
     args = Macro.generate_arguments(length(type_fields), nil)
     type_t = type_t(dc)
     when_clause = when_clause(dc)
-    mod = mod(name)
+    mod = Builder.mod(name)
 
     quote do
       @spec unquote(helper_name)(unquote_splicing(type_fields)) :: unquote(mod).unquote(type_t)
@@ -42,9 +43,6 @@ defmodule Haex.Data.DataConstructorBuilder do
   defp type_fields(%DataConstructor{params: params}) do
     Enum.map(params, &param_to_typespec_param/1)
   end
-
-  @spec mod(DataConstructor.mod_name()) :: Macro.output()
-  defp mod(name), do: {:__aliases__, [alias: false], name}
 
   @spec type_spec(DataConstructor.t()) :: Macro.output()
   defp type_spec(%DataConstructor{params: []} = dc) do

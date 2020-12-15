@@ -3,14 +3,12 @@ defmodule Haex.Data.TypeConstructor do
   builds type constructor module used to implement a data type
   """
   alias __MODULE__, as: T
+  alias Haex.Data
 
   @type t() :: %T{
-          name: mod_name(),
-          params: [param_name()]
+          name: Data.mod_name(),
+          params: [Data.param_name()]
         }
   @enforce_keys [:name, :params]
   defstruct [:name, :params]
-
-  @type mod_name() :: [atom()]
-  @type param_name() :: atom()
 end

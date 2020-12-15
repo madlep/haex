@@ -4,22 +4,17 @@ defmodule Haex.Data.DataConstructor do
   """
 
   alias __MODULE__, as: T
+  alias Haex.Data
 
   @type t() :: %T{
-          name: mod_name(),
-          params: [param()] | param_keywords(),
+          name: Data.mod_name(),
+          params: [Data.param()] | Data.param_keywords(),
           record?: boolean()
         }
   @enforce_keys [:name, :params, :record?]
   defstruct [:name, :params, :record?]
 
-  @type mod_name() :: [atom()]
-  @type param_name() :: atom()
-  @type param() :: {:variable, param_name()} | {:external_type, raw_ast :: term()}
-
-  @type param_keywords() :: [{param_name(), param()}]
-
-  @spec type_variables(t()) :: [param()]
+  @spec type_variables(t()) :: [Data.param()]
   def type_variables(%T{params: params}) do
     params
     |> Enum.filter(fn {param_type, _var} -> param_type == :variable end)

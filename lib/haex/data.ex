@@ -12,6 +12,12 @@ defmodule Haex.Data do
           type_constructor: TypeConstructor.t(),
           data_constructors: [DataConstructor.t()]
         }
+  @type mod_name() :: [atom()]
+
+  @type param_name() :: atom()
+  @type param() :: {:variable, param_name()} | {:external_type, raw_ast :: term()}
+  @type param_keywords() :: [{param_name(), param()}]
+
   @enforce_keys [:type_constructor, :data_constructors]
   defstruct [:type_constructor, :data_constructors]
 
