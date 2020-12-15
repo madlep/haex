@@ -8,8 +8,6 @@ defmodule Haex.Data do
   alias Haex.Data.Parser
   alias Haex.Data.TypeConstructor
 
-  alias __MODULE__, as: T
-
   @type t() :: %__MODULE__{
           type_constructor: TypeConstructor.t(),
           data_constructors: [DataConstructor.t()]
