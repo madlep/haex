@@ -3,7 +3,7 @@ defmodule Haex.Data.TypeConstructor do
   builds type constructor module used to implement a data type
   """
   alias __MODULE__, as: T
-  alias Haex.Data.DataConstructor, as: DataConstructor
+  alias Haex.Data.DataConstructorBuilder
 
   @type t() :: %T{
           name: mod_name(),
@@ -19,8 +19,8 @@ defmodule Haex.Data.TypeConstructor do
   def build(%T{name: name}, data_constructors) do
     quote do
       defmodule unquote({:__aliases__, [alias: false], name}) do
-        unquote(Enum.map(data_constructors, &DataConstructor.build/1))
-        unquote(Enum.map(data_constructors, &DataConstructor.build_helper/1))
+        unquote(Enum.map(data_constructors, &DataConstructorBuilder.build/1))
+        unquote(Enum.map(data_constructors, &DataConstructorBuilder.build_helper/1))
       end
     end
   end
