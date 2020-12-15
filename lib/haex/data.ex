@@ -3,6 +3,7 @@ defmodule Haex.Data do
   Parses and builds modules to implement data types
   """
 
+  alias Haex.Data.DataBuilder
   alias Haex.Data.DataConstructor
   alias Haex.Data.Parser
   alias Haex.Data.TypeConstructor
@@ -20,11 +21,6 @@ defmodule Haex.Data do
   def data(data_ast) do
     data_ast
     |> Parser.parse()
-    |> build()
-  end
-
-  @spec build(t()) :: Macro.output()
-  def build(%T{type_constructor: type_constructor, data_constructors: data_constructors}) do
-    TypeConstructor.build(type_constructor, data_constructors)
+    |> DataBuilder.build()
   end
 end
