@@ -1,6 +1,7 @@
 defmodule Haex.Data.DataConstructorBuilder do
   @moduledoc """
-  generates AST representation of `Haex.Data.DataConstructor` to return from `Haex.data/1` macro
+  generates AST representation of `Haex.Data.DataConstructor` to return from
+  `Haex.data/1` macro
   """
   alias Haex.Data.DataConstructor
 
