@@ -3,6 +3,7 @@ defmodule Haex.Data.TypeConstructor do
   builds type constructor module used to implement a data type
   """
   alias __MODULE__, as: T
+  alias Haex.Data.DataConstructor
   alias Haex.Data.DataConstructorBuilder
 
   @type t() :: %T{
