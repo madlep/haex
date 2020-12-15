@@ -12,7 +12,7 @@ defmodule Haex.Data.Parser do
   def parse({:"::", _meta, [type_ast, data_asts]}) do
     type_constructor = parse_type_constructor(type_ast)
 
-    data_constructors = parse_data_constructors(data_asts, type_constructor)
+    data_constructors = parse_data_constructors(data_asts)
 
     %Data{
       type_constructor: type_constructor,
@@ -45,42 +45,37 @@ defmodule Haex.Data.Parser do
     Enum.map(type_params_ast, fn {type_param_name, _meta, _ctx} -> type_param_name end)
   end
 
-  @spec parse_data_constructors(Macro.t(), TypeConstructor.t()) :: [DataConstructor.t()]
-  defp parse_data_constructors({:|, _meta, _asts} = ast, type_constructor) do
-    ast |> or_ast_to_list() |> parse_data_constructors(type_constructor)
+  @spec parse_data_constructors(Macro.t()) :: [DataConstructor.t()]
+  defp parse_data_constructors({:|, _meta, _asts} = ast) do
+    ast |> or_ast_to_list() |> parse_data_constructors()
   end
 
-  defp parse_data_constructors(data_asts, type_constructor) when is_list(data_asts) do
-    Enum.map(data_asts, &parse_data_constructor(&1, type_constructor))
+  defp parse_data_constructors(data_asts) when is_list(data_asts) do
+    Enum.map(data_asts, &parse_data_constructor/1)
   end
 
-  defp parse_data_constructors(data_ast, type_constructor) when not is_list(data_ast) do
-    [parse_data_constructor(data_ast, type_constructor)]
+  defp parse_data_constructors(data_ast) when not is_list(data_ast) do
+    [parse_data_constructor(data_ast)]
   end
 
   @spec or_ast_to_list(Macro.t()) :: [Macro.t()]
   defp or_ast_to_list({:|, _meta, [h_ast, t_ast]}), do: [h_ast | or_ast_to_list(t_ast)]
   defp or_ast_to_list(ast), do: [ast]
 
-  @spec parse_data_constructor(Macro.t(), TypeConstructor.t()) :: DataConstructor.t()
-  defp parse_data_constructor({:__aliases__, _, data_name}, type_constructor) do
+  @spec parse_data_constructor(Macro.t()) :: DataConstructor.t()
+  defp parse_data_constructor({:__aliases__, _, data_name}) do
     %DataConstructor{
       name: data_name,
-      type: type_constructor.name,
       params: [],
       record?: false
     }
   end
 
-  defp parse_data_constructor(
-         {{:., _, [{:__aliases__, _, data_name}, :t]}, _, data_params_ast},
-         type_constructor
-       ) do
+  defp parse_data_constructor({{:., _, [{:__aliases__, _, data_name}, :t]}, _, data_params_ast}) do
     {data_params, is_record} = parse_data_params(data_params_ast)
 
     %DataConstructor{
       name: data_name,
-      type: type_constructor.name,
       params: data_params,
       record?: is_record
     }

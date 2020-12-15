@@ -7,12 +7,11 @@ defmodule Haex.Data.DataConstructor do
 
   @type t() :: %T{
           name: mod_name(),
-          type: mod_name(),
           params: [param()] | param_keywords(),
           record?: boolean()
         }
-  @enforce_keys [:name, :type, :params, :record?]
-  defstruct [:name, :type, :params, :record?]
+  @enforce_keys [:name, :params, :record?]
+  defstruct [:name, :params, :record?]
 
   @type mod_name() :: [atom()]
   @type param_name() :: atom()
@@ -127,7 +126,7 @@ defmodule Haex.Data.DataConstructor do
     end
   end
 
-  defp helper_name(name) do
+  def helper_name(%T{name: name}) do
     name
     |> List.last()
     |> Atom.to_string()
