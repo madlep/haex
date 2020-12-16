@@ -3,10 +3,12 @@ defmodule Haex.MixProject do
 
   use Mix.Project
 
+  @vsn "0.0.3"
+
   def project do
     [
       app: :haex,
-      version: "0.0.2",
+      version: @vsn,
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -14,7 +16,10 @@ defmodule Haex.MixProject do
         "Haskell as Elixir - A DSL for implementing Haskell style sum and product data types in Elixir",
       package: package(),
       source_url: "https://github.com/madlep/haex",
-      homepage_url: "https://github.com/madlep/haex"
+      homepage_url: "https://github.com/madlep/haex",
+      docs: [
+        source_ref: @vsn
+      ]
     ]
   end
 
