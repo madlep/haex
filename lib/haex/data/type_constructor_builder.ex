@@ -19,7 +19,6 @@ defmodule Haex.Data.TypeConstructorBuilder do
         unquote(Enum.map(data_constructors, &build_helper(tc, &1)))
       end
     end
-    |> Haex.macro_puts()
   end
 
   @spec build_helper(TypeConstructor.t(), DataConstructor.t()) :: Macro.output()
@@ -43,12 +42,12 @@ defmodule Haex.Data.TypeConstructorBuilder do
   end
 
   @spec type_t(TypeConstructor.t(), [DataConstructor.t()]) :: Macro.output()
-  defp type_t(%TypeConstructor{params: params}, data_constructors) do
+  defp type_t(%TypeConstructor{params: params} = tc, data_constructors) do
     quoted_params = Enum.map(params, fn param -> {param, [], Elixir} end)
 
     dc_type_ts =
       data_constructors
-      |> Enum.map(&DataConstructorBuilder.qualified_type_t/1)
+      |> Enum.map(&DataConstructorBuilder.qualified_type_t(tc, &1))
       |> Builder.or_pipe_join()
 
     quote do

@@ -3,8 +3,10 @@ defmodule Haex.Data.DataConstructorBuilder do
   generates AST representation of `Haex.Data.DataConstructor` to return from
   `Haex.data/1` macro
   """
+  alias Haex.Data
   alias Haex.Data.Builder
   alias Haex.Data.DataConstructor
+  alias Haex.Data.TypeConstructor
 
   @spec build(DataConstructor.t()) :: Macro.output()
   def build(%DataConstructor{name: name} = dc) do
@@ -66,9 +68,9 @@ defmodule Haex.Data.DataConstructorBuilder do
     end
   end
 
-  @spec qualified_type_t(DataConstructor.t()) :: Macro.output()
-  def qualified_type_t(%DataConstructor{name: name} = dc) do
-    mod = Builder.mod(name)
+  @spec qualified_type_t(TypeConstructor.t(), DataConstructor.t()) :: Macro.output()
+  def qualified_type_t(%TypeConstructor{name: tc_name}, %DataConstructor{name: name} = dc) do
+    mod = Builder.mod(tc_name ++ name)
     type_t = type_t(dc)
 
     quote do
@@ -94,7 +96,7 @@ defmodule Haex.Data.DataConstructorBuilder do
     end
   end
 
-  @spec param_to_typespec_param(DataConstructor.param()) :: Macro.output()
+  @spec param_to_typespec_param(Data.param()) :: Macro.output()
   defp param_to_typespec_param({:variable, variable}), do: {variable, [], Elixir}
   defp param_to_typespec_param({:external_type, external}), do: external
 end

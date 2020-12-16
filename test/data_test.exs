@@ -13,10 +13,10 @@ defmodule DataTest do
            {:t,
             {:type, m, :union,
              [
-               {:remote_type, m, [{:atom, 0, Red}, {:atom, 0, :t}, []]},
-               {:remote_type, m, [{:atom, 0, Green}, {:atom, 0, :t}, []]},
-               {:remote_type, m, [{:atom, 0, Blue}, {:atom, 0, :t}, []]},
-               {:remote_type, m, [{:atom, 0, BlueSteel}, {:atom, 0, :t}, []]}
+               {:remote_type, m, [{:atom, 0, Haex.Example.Color.Red}, {:atom, 0, :t}, []]},
+               {:remote_type, m, [{:atom, 0, Haex.Example.Color.Green}, {:atom, 0, :t}, []]},
+               {:remote_type, m, [{:atom, 0, Haex.Example.Color.Blue}, {:atom, 0, :t}, []]},
+               {:remote_type, m, [{:atom, 0, Haex.Example.Color.BlueSteel}, {:atom, 0, :t}, []]}
              ]}, []}
        ]} = Code.Typespec.fetch_types(Color)
     end
@@ -45,8 +45,9 @@ defmodule DataTest do
            {:t,
             {:type, m, :union,
              [
-               {:remote_type, m, [{:atom, 0, Nothing}, {:atom, 0, :t}, []]},
-               {:remote_type, m, [{:atom, 0, Just}, {:atom, 0, :t}, [{:var, m, :a}]]}
+               {:remote_type, m, [{:atom, 0, Haex.Example.Maybe.Nothing}, {:atom, 0, :t}, []]},
+               {:remote_type, m,
+                [{:atom, 0, Haex.Example.Maybe.Just}, {:atom, 0, :t}, [{:var, m, :a}]]}
              ]}, [{:var, m, :a}]}
        ]} = Code.Typespec.fetch_types(Maybe)
     end
@@ -73,8 +74,10 @@ defmodule DataTest do
            {:t,
             {:type, m, :union,
              [
-               {:remote_type, m, [{:atom, 0, Left}, {:atom, 0, :t}, [{:var, m, :a}]]},
-               {:remote_type, m, [{:atom, 0, Right}, {:atom, 0, :t}, [{:var, m, :b}]]}
+               {:remote_type, m,
+                [{:atom, 0, Haex.Example.Either.Left}, {:atom, 0, :t}, [{:var, m, :a}]]},
+               {:remote_type, m,
+                [{:atom, 0, Haex.Example.Either.Right}, {:atom, 0, :t}, [{:var, m, :b}]]}
              ]}, [{:var, m, :a}, {:var, m, :b}]}
        ]} = Code.Typespec.fetch_types(Either)
     end

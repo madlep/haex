@@ -81,7 +81,7 @@ defmodule Haex.Data.Parser do
     }
   end
 
-  @spec parse_data_params(Macro.t()) :: {[DataConstructor.param()], is_record :: boolean()}
+  @spec parse_data_params(Macro.t()) :: {[Data.param()], is_record :: boolean()}
   defp parse_data_params([data_params_ast]) when is_list(data_params_ast) do
     if Keyword.keyword?(data_params_ast) do
       params =
@@ -100,7 +100,7 @@ defmodule Haex.Data.Parser do
     {params, false}
   end
 
-  @spec parse_data_param(Macro.t()) :: DataConstructor.param()
+  @spec parse_data_param(Macro.t()) :: Data.param()
   defp parse_data_param({name, _, args}) when not is_list(args) do
     {:variable, name}
   end
