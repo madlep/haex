@@ -12,7 +12,9 @@ defmodule Haex.MixProject do
       deps: deps(),
       description:
         "Haskell as Elixir - A DSL for implementing Haskell style sum and product data types in Elixir",
-      package: package()
+      package: package(),
+      source_url: "https://github.com/madlep/haex",
+      homepage_url: "https://github.com/madlep/haex"
     ]
   end
 
