@@ -21,6 +21,13 @@ defmodule Haex.Data.DataConstructor do
     |> Enum.uniq()
   end
 
+  @spec has_variable?(t(), Data.param_name()) :: boolean()
+  def has_variable?(%T{params: params}, variable_name) do
+    Enum.any?(params, fn {param_type, param_name} ->
+      param_type == :variable && param_name == variable_name
+    end)
+  end
+
   def helper_name(%T{name: name}) do
     name
     |> List.last()

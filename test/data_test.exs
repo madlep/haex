@@ -2,21 +2,21 @@ defmodule DataTest do
   use ExUnit.Case
   doctest Haex
 
-  describe "sum data type with constant data constructors" do
+  describe "enum sum data type with constant data constructors" do
     alias Haex.Example.Color
     # data Color :: Red | Green | Blue | BlueSteel
 
-    test "has sum type defined" do
+    test "has type spec defined" do
       {:ok,
        [
          type:
            {:t,
-            {:type, _m, :union,
+            {:type, m, :union,
              [
-               {:atom, 0, Red},
-               {:atom, 0, Green},
-               {:atom, 0, Blue},
-               {:atom, 0, BlueSteel}
+               {:remote_type, m, [{:atom, 0, Red}, {:atom, 0, :t}, []]},
+               {:remote_type, m, [{:atom, 0, Green}, {:atom, 0, :t}, []]},
+               {:remote_type, m, [{:atom, 0, Blue}, {:atom, 0, :t}, []]},
+               {:remote_type, m, [{:atom, 0, BlueSteel}, {:atom, 0, :t}, []]}
              ]}, []}
        ]} = Code.Typespec.fetch_types(Color)
     end
@@ -45,7 +45,7 @@ defmodule DataTest do
            {:t,
             {:type, m, :union,
              [
-               {:atom, 0, Nothing},
+               {:remote_type, m, [{:atom, 0, Nothing}, {:atom, 0, :t}, []]},
                {:remote_type, m, [{:atom, 0, Just}, {:atom, 0, :t}, [{:var, m, :a}]]}
              ]}, [{:var, m, :a}]}
        ]} = Code.Typespec.fetch_types(Maybe)

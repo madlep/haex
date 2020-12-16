@@ -16,23 +16,7 @@ defmodule Haex.Data.DataConstructorBuilder do
     end
   end
 
-  @spec build_helper(DataConstructor.t()) :: Macro.output()
-  def build_helper(%DataConstructor{name: name} = dc) do
-    helper_name = DataConstructor.helper_name(dc)
-    type_fields = type_fields(dc)
-    args = Macro.generate_arguments(length(type_fields), nil)
-    type_t = type_t(dc)
-    when_clause = when_clause(dc)
-    mod = Builder.mod(name)
-
-    quote do
-      @spec unquote(helper_name)(unquote_splicing(type_fields)) :: unquote(mod).unquote(type_t)
-            when unquote(when_clause)
-      def unquote(helper_name)(unquote_splicing(args)),
-        do: unquote(mod).new(unquote_splicing(args))
-    end
-  end
-
+  @spec when_clause(DataConstructor.t()) :: Macro.output()
   defp when_clause(%DataConstructor{} = dc) do
     dc
     |> DataConstructor.type_variables()
@@ -40,7 +24,7 @@ defmodule Haex.Data.DataConstructorBuilder do
   end
 
   @spec type_fields(DataConstructor.t()) :: Macro.output()
-  defp type_fields(%DataConstructor{params: params}) do
+  def type_fields(%DataConstructor{params: params}) do
     Enum.map(params, &param_to_typespec_param/1)
   end
 
@@ -48,6 +32,14 @@ defmodule Haex.Data.DataConstructorBuilder do
   defp type_spec(%DataConstructor{params: []} = dc) do
     quote do
       @opaque unquote(type_t(dc)) :: __MODULE__
+    end
+  end
+
+  defp type_spec(%DataConstructor{record?: false} = dc) do
+    fields = type_fields(dc)
+
+    quote do
+      @opaque unquote(type_t(dc)) :: {__MODULE__, unquote_splicing(fields)}
     end
   end
 
@@ -74,11 +66,13 @@ defmodule Haex.Data.DataConstructorBuilder do
     end
   end
 
-  defp type_spec(%DataConstructor{record?: false} = dc) do
-    fields = type_fields(dc)
+  @spec qualified_type_t(DataConstructor.t()) :: Macro.output()
+  def qualified_type_t(%DataConstructor{name: name} = dc) do
+    mod = Builder.mod(name)
+    type_t = type_t(dc)
 
     quote do
-      @opaque unquote(type_t(dc)) :: {__MODULE__, unquote_splicing(fields)}
+      unquote(mod).unquote(type_t)
     end
   end
 
