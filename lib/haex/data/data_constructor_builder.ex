@@ -3,15 +3,15 @@ defmodule Haex.Data.DataConstructorBuilder do
   generates AST representation of `Haex.Data.DataConstructor` to return from
   `Haex.data/1` macro
   """
+  alias Haex.Ast
   alias Haex.Data
-  alias Haex.Data.Builder
   alias Haex.Data.DataConstructor
   alias Haex.Data.TypeConstructor
 
   @spec build(DataConstructor.t()) :: Macro.output()
   def build(%DataConstructor{name: name} = dc) do
     quote do
-      defmodule unquote(Builder.mod(name)) do
+      defmodule unquote(Ast.mod(name)) do
         unquote(type_spec(dc))
         unquote(type_struct(dc))
         unquote(new(dc))
@@ -128,7 +128,7 @@ defmodule Haex.Data.DataConstructorBuilder do
 
   @spec qualified_type_t(TypeConstructor.t(), DataConstructor.t()) :: Macro.output()
   def qualified_type_t(%TypeConstructor{name: tc_name}, %DataConstructor{name: name} = dc) do
-    mod = Builder.mod(tc_name ++ name)
+    mod = Ast.mod(tc_name ++ name)
     type_t = type_t(dc)
 
     quote do

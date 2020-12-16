@@ -11,13 +11,4 @@ defmodule Haex do
     ast
     |> Haex.Data.data()
   end
-
-  @spec macro_puts(Macro.output()) :: Macro.output()
-  def macro_puts(ast) do
-    ast
-    |> Macro.to_string()
-    |> IO.puts()
-
-    ast
-  end
 end

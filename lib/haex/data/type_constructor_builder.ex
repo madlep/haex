@@ -4,7 +4,7 @@ defmodule Haex.Data.TypeConstructorBuilder do
   `Haex.data/1` macro
   """
 
-  alias Haex.Data.Builder
+  alias Haex.Ast
   alias Haex.Data.DataConstructor
   alias Haex.Data.DataConstructorBuilder
   alias Haex.Data.TypeConstructor
@@ -12,7 +12,7 @@ defmodule Haex.Data.TypeConstructorBuilder do
   @spec build(TypeConstructor.t(), [DataConstructor.t()]) :: Macro.output()
   def build(%TypeConstructor{name: name} = tc, data_constructors) do
     quote do
-      defmodule unquote(Builder.mod(name)) do
+      defmodule unquote(Ast.mod(name)) do
         unquote(type_t(tc, data_constructors))
 
         unquote(Enum.map(data_constructors, &DataConstructorBuilder.build/1))
@@ -31,7 +31,7 @@ defmodule Haex.Data.TypeConstructorBuilder do
     args = Macro.generate_arguments(length(dc_params), nil)
     helper_type_t = helper_type_t(tc, dc)
     helper_when_clause = helper_when_clause(tc, dc)
-    mod = Builder.mod(name)
+    mod = Ast.mod(name)
 
     quote do
       @spec unquote(helper_name)(unquote_splicing(type_fields)) :: unquote(helper_type_t)
@@ -56,7 +56,7 @@ defmodule Haex.Data.TypeConstructorBuilder do
     args = Enum.map(type_field_names, fn name -> {name, [], Elixir} end)
     helper_type_t = helper_type_t(tc, dc)
     helper_when_clause = helper_when_clause(tc, dc)
-    mod = Builder.mod(name)
+    mod = Ast.mod(name)
 
     quote do
       @spec unquote(helper_name)(unquote_splicing(type_field_args)) :: unquote(helper_type_t)
@@ -73,7 +73,7 @@ defmodule Haex.Data.TypeConstructorBuilder do
     dc_type_ts =
       data_constructors
       |> Enum.map(&DataConstructorBuilder.qualified_type_t(tc, &1))
-      |> Builder.or_pipe_join()
+      |> Ast.or_pipe_join()
 
     quote do
       @type t(unquote_splicing(quoted_params)) :: unquote(dc_type_ts)
