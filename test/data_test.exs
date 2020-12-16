@@ -1,11 +1,14 @@
 defmodule DataTest do
   @moduledoc false
 
+  # ugly work around to compile example to file. This is needed, or we don't
+  # get typespecs if compiled in memory as part of test
+  File.mkdir_p!("_build/test/lib/haex/ebin")
+  Kernel.ParallelCompiler.compile_to_path(["examples/example.ex"], "_build/test/lib/haex/ebin")
+
   use ExUnit.Case
-  doctest Haex
 
   describe "enum sum data type with constant data constructors" do
-    alias Haex.Example.Color
     # data Color :: Red | Green | Blue | BlueSteel
 
     test "has type spec defined" do
@@ -15,10 +18,10 @@ defmodule DataTest do
            {:t,
             {:type, m, :union,
              [
-               {:remote_type, m, [{:atom, 0, Haex.Example.Color.Red}, {:atom, 0, :t}, []]},
-               {:remote_type, m, [{:atom, 0, Haex.Example.Color.Green}, {:atom, 0, :t}, []]},
-               {:remote_type, m, [{:atom, 0, Haex.Example.Color.Blue}, {:atom, 0, :t}, []]},
-               {:remote_type, m, [{:atom, 0, Haex.Example.Color.BlueSteel}, {:atom, 0, :t}, []]}
+               {:remote_type, m, [{:atom, 0, Color.Red}, {:atom, 0, :t}, []]},
+               {:remote_type, m, [{:atom, 0, Color.Green}, {:atom, 0, :t}, []]},
+               {:remote_type, m, [{:atom, 0, Color.Blue}, {:atom, 0, :t}, []]},
+               {:remote_type, m, [{:atom, 0, Color.BlueSteel}, {:atom, 0, :t}, []]}
              ]}, []}
        ]} = Code.Typespec.fetch_types(Color)
     end
@@ -38,7 +41,6 @@ defmodule DataTest do
 
   describe "sum data type with mix of constant and unnamed constructor parameters" do
     # data  Maybe a  =  Nothing | Just a
-    alias Haex.Example.Maybe
 
     test "has sum type defined" do
       {:ok,
@@ -47,9 +49,8 @@ defmodule DataTest do
            {:t,
             {:type, m, :union,
              [
-               {:remote_type, m, [{:atom, 0, Haex.Example.Maybe.Nothing}, {:atom, 0, :t}, []]},
-               {:remote_type, m,
-                [{:atom, 0, Haex.Example.Maybe.Just}, {:atom, 0, :t}, [{:var, m, :a}]]}
+               {:remote_type, m, [{:atom, 0, Maybe.Nothing}, {:atom, 0, :t}, []]},
+               {:remote_type, m, [{:atom, 0, Maybe.Just}, {:atom, 0, :t}, [{:var, m, :a}]]}
              ]}, [{:var, m, :a}]}
        ]} = Code.Typespec.fetch_types(Maybe)
     end
@@ -67,7 +68,6 @@ defmodule DataTest do
 
   describe "sum data type with unnamed constructor parameters" do
     # data  Either a b  =  Left a | Right b
-    alias Haex.Example.Either
 
     test "has sum type defined" do
       {:ok,
@@ -76,10 +76,8 @@ defmodule DataTest do
            {:t,
             {:type, m, :union,
              [
-               {:remote_type, m,
-                [{:atom, 0, Haex.Example.Either.Left}, {:atom, 0, :t}, [{:var, m, :a}]]},
-               {:remote_type, m,
-                [{:atom, 0, Haex.Example.Either.Right}, {:atom, 0, :t}, [{:var, m, :b}]]}
+               {:remote_type, m, [{:atom, 0, Either.Left}, {:atom, 0, :t}, [{:var, m, :a}]]},
+               {:remote_type, m, [{:atom, 0, Either.Right}, {:atom, 0, :t}, [{:var, m, :b}]]}
              ]}, [{:var, m, :a}, {:var, m, :b}]}
        ]} = Code.Typespec.fetch_types(Either)
     end
