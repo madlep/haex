@@ -24,7 +24,7 @@ defmodule Haex.Data.TypeConstructorBuilder do
   @spec build_helper(TypeConstructor.t(), DataConstructor.t()) :: Macro.output()
   def build_helper(
         %TypeConstructor{} = tc,
-        %DataConstructor{name: name, params: dc_params} = dc
+        %DataConstructor{record?: false, name: name, params: dc_params} = dc
       ) do
     helper_name = DataConstructor.helper_name(dc)
     type_fields = DataConstructorBuilder.type_fields(dc)
@@ -35,6 +35,31 @@ defmodule Haex.Data.TypeConstructorBuilder do
 
     quote do
       @spec unquote(helper_name)(unquote_splicing(type_fields)) :: unquote(helper_type_t)
+            when unquote(helper_when_clause)
+      def unquote(helper_name)(unquote_splicing(args)),
+        do: unquote(mod).new(unquote_splicing(args))
+    end
+  end
+
+  def build_helper(
+        %TypeConstructor{} = tc,
+        %DataConstructor{record?: true, name: name} = dc
+      ) do
+    helper_name = DataConstructor.helper_name(dc)
+    type_fields = DataConstructorBuilder.type_fields(dc)
+    type_field_names = type_fields |> Enum.map(fn {name, _field} -> name end)
+
+    type_field_args =
+      type_fields
+      |> Enum.map(fn {name, type} -> quote(do: unquote({name, [], Elixir}) :: unquote(type)) end)
+
+    args = Enum.map(type_field_names, fn name -> {name, [], Elixir} end)
+    helper_type_t = helper_type_t(tc, dc)
+    helper_when_clause = helper_when_clause(tc, dc)
+    mod = Builder.mod(name)
+
+    quote do
+      @spec unquote(helper_name)(unquote_splicing(type_field_args)) :: unquote(helper_type_t)
             when unquote(helper_when_clause)
       def unquote(helper_name)(unquote_splicing(args)),
         do: unquote(mod).new(unquote_splicing(args))

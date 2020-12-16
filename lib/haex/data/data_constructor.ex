@@ -15,9 +15,15 @@ defmodule Haex.Data.DataConstructor do
   defstruct [:name, :params, :record?]
 
   @spec type_variables(t()) :: [Data.param()]
-  def type_variables(%T{params: params}) do
+  def type_variables(%T{params: params, record?: false}) do
     params
     |> Enum.filter(fn {param_type, _var} -> param_type == :variable end)
+    |> Enum.uniq()
+  end
+
+  def type_variables(%T{params: params, record?: true}) do
+    params
+    |> Enum.filter(fn {_param_name, {param_type, _var}} -> param_type == :variable end)
     |> Enum.uniq()
   end
 

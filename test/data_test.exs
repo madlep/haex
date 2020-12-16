@@ -1,4 +1,6 @@
 defmodule DataTest do
+  @moduledoc false
+
   use ExUnit.Case
   doctest Haex
 
