@@ -9,7 +9,9 @@ defmodule Haex.MixProject do
       version: "0.1.0",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      description:
+        "Haskell as Elixir - A DSL for implementing Haskell style sum and product data types in Elixir"
     ]
   end
 

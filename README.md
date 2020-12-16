@@ -1,16 +1,22 @@
 # Haex
 
-"Haskell as Elixir" _(pronounced "hacks")_
+_"Haskell as Elixir"_ - A DSL for implementing Haskell style sum and product data types in Elixir
 
-Provides a DSL for implementing Haskell style data types to generate Elixir
-data structure and modules implementing those patterns.
+_(pronounced "hacks")_
 
 A succinct statement generates a number of modules, and helper functions,
 along with valid dialyzer type and specs to work with those data structures.
 
-The goal is to make it quicker and easier to work with rich types without having to implement a lot of boilerplate code to build common patterns. This is particularly true in the case of Elixir structs, which to be used properly, require a `defstruct` call, `@type` declaration (which is _almost but not quite_ identical), and an `@enforce_keys` annotaiton. All of these can be automated away.
+The goal is to make it quicker and easier to work with rich types without
+having to implement a lot of boilerplate code to build common patterns. This
+is particularly true in the case of Elixir structs, which to be used
+properly, require a `defstruct` call, `@type` declaration (which is _almost
+but not quite_ identical), and an `@enforce_keys` annotaiton. All of these
+can be automated away.
 
-A secondary goal is to encourage good use of types that are understand by dialzyer. This makes it easier to work with and reason about the code, and aids documentation of what functions expect and return.
+A secondary goal is to encourage good use of types that are understand by
+dialzyer. This makes it easier to work with and reason about the code, and
+aids documentation of what functions expect and return.
 ### Basics
 ```elixir
 import Haex
