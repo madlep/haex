@@ -1,11 +1,6 @@
 defmodule DataTest do
   @moduledoc false
 
-  # ugly work around to compile example to file. This is needed, or we don't
-  # get typespecs if compiled in memory as part of test
-  File.mkdir_p!("_build/test/lib/haex/ebin")
-  Kernel.ParallelCompiler.compile_to_path(["examples/example.ex"], "_build/test/lib/haex/ebin")
-
   use ExUnit.Case
 
   describe "enum sum data type with constant data constructors" do

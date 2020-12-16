@@ -12,6 +12,7 @@ defmodule Haex.MixProject do
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      elixirc_paths: elixirc_paths(Mix.env()),
       description:
         "Haskell as Elixir - A DSL for implementing Haskell style sum and product data types in Elixir",
       package: package(),
@@ -38,6 +39,10 @@ defmodule Haex.MixProject do
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
+
+  defp elixirc_paths(:dev), do: ["lib", "examples"]
+  defp elixirc_paths(:test), do: ["lib", "examples"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp package do
     [
