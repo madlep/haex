@@ -11,7 +11,8 @@ defmodule Haex.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description:
-        "Haskell as Elixir - A DSL for implementing Haskell style sum and product data types in Elixir"
+        "Haskell as Elixir - A DSL for implementing Haskell style sum and product data types in Elixir",
+      package: package()
     ]
   end
 
@@ -25,6 +26,15 @@ defmodule Haex.MixProject do
     [
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+  defp package do
+    [
+      links: %{
+        "GitHub" => "https://github.com/madlep/haex",
+        "Twitter" => "https://twitter.com/madlep"
+      }
     ]
   end
 end
