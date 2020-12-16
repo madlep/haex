@@ -31,6 +31,7 @@ defmodule Haex.MixProject do
 
   defp package do
     [
+      licenses: ["MIT"],
       links: %{
         "GitHub" => "https://github.com/madlep/haex",
         "Twitter" => "https://twitter.com/madlep"
