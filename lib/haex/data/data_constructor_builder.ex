@@ -64,7 +64,13 @@ defmodule Haex.Data.DataConstructorBuilder do
       |> type_fields()
       |> Enum.map(fn {name, _field} -> {name, nil} end)
 
+    enforce_keys =
+      dc
+      |> type_fields()
+      |> Enum.map(fn {name, _field} -> name end)
+
     quote do
+      @enforce_keys unquote(enforce_keys)
       defstruct unquote(struct_fields)
     end
   end
