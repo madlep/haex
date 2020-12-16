@@ -25,7 +25,7 @@ defmodule Haex.Example do
   data PersonRec ::
          PersonRec.t(
            name: String.t(),
-           social_media: SocialMedia.t(),
+           social_media: [SocialMedia.t()],
            age: integer(),
            height: float(),
            favourite_ice_cream: String.t(),
