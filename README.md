@@ -88,12 +88,12 @@ end
 
 ...saving you a lot of keyboard wear
 
-### Enum Types
+## Enum Types
 ```elixir
 data Color :: Red | Green | Blue | BlueSteel
 ```
 
-### Sum Types
+## Sum Types
 ```elixir
 data SocialMediaAccount ::
         Twitok.t(String.t())
@@ -102,7 +102,7 @@ data SocialMediaAccount ::
         | Instaban.t(String.t())
 ```
 
-### Product Types
+## Product Types
 ```elixir
 data Pair.t(a, b) :: Pair.t(a, b)
 

@@ -18,6 +18,8 @@ defmodule Haex.MixProject do
       source_url: "https://github.com/madlep/haex",
       homepage_url: "https://github.com/madlep/haex",
       docs: [
+        main: "readme",
+        extras: ["README.md"],
         source_ref: @vsn
       ]
     ]
