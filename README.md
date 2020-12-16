@@ -126,7 +126,7 @@ by adding `haex` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:haex, "~> 0.1.0"}
+    {:haex, "~> 0.0.1"}
   ]
 end
 ```
