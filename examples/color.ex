@@ -1,4 +1,4 @@
 import Haex
 
-# data Bool = False | True
+# data Color = Red | Green | Blue | BlueSteel
 data Color :: Red | Green | Blue | BlueSteel
